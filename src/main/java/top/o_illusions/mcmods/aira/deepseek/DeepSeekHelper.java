@@ -2,7 +2,6 @@ package top.o_illusions.mcmods.aira.deepseek;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,13 +16,24 @@ public class DeepSeekHelper {
     protected String apiUrl;
     protected String apiKey;
     protected Model model;
+
+    protected float top_p;
+    protected float presence_penalty;
+    protected float frequency_penalty;
     protected int maxTokens;
+
+
 
     public DeepSeekHelper(String apiUrl, String apiKey, Model model, int maxTokens, String cueWord) {
         this.apiUrl = apiUrl;
         this.apiKey = apiKey;
         this.model = model;
         this.maxTokens = maxTokens;
+
+        this.top_p = 0.2f;
+        this.presence_penalty = 0.5f;
+        this.frequency_penalty = 0.5f;
+
 
         requestTemplateJson.addProperty("model", this.model.getValue());
 
@@ -47,7 +57,9 @@ public class DeepSeekHelper {
 
         requestJson.add("messages", dialogueMessage);
         requestJson.addProperty("max_tokens", maxTokens);
-        requestJson.addProperty("top_p", 0.2);
+        requestJson.addProperty("top_p", top_p);
+        requestJson.addProperty("presence_penalty", presence_penalty);
+        requestJson.addProperty("frequency_penalty", frequency_penalty);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
@@ -67,9 +79,48 @@ public class DeepSeekHelper {
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject();
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
         }
         return null;
     }
 
+    public void setTop_p(float top_p) {
+        this.top_p = top_p;
+    }
+
+    public void setFrequencyPenalty(float frequency_penalty) {
+        this.frequency_penalty = frequency_penalty;
+    }
+
+    public void setPresencePenalty(float presence_penalty) {
+        this.presence_penalty = presence_penalty;
+    }
+
+    public void setMaxTokens(int maxTokens) {
+        this.maxTokens = maxTokens;
+    }
+
+    public float getTop_p() {
+        return top_p;
+    }
+
+    public float getFrequencyPenalty() {
+        return frequency_penalty;
+    }
+
+    public float getPresencePenalty() {
+        return presence_penalty;
+    }
+
+    public int getMaxTokens() {
+        return maxTokens;
+    }
+
+    public void setSystemCueWord(JsonObject systemCueWord) {
+        this.systemCueWord = systemCueWord;
+    }
+
+    public JsonObject getSystemCueWord() {
+        return systemCueWord;
+    }
 }
