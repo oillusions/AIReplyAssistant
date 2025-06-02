@@ -14,10 +14,8 @@ public class AiraClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        Intrinsics.class.getName();
         ClientReceiveMessageEvents.GAME.register((message, test) -> {
-            client.player.sendMessage(message);
-            client.player.sendMessage(Text.literal(String.valueOf(test)));
+            deepSeek.onReceiveMessage(message.getString(), null);
         });
         ClientReceiveMessageEvents.CHAT.register(((text, signedMessage, gameProfile, parameters, instant) -> {
                     deepSeek.onReceiveMessage(text.getString(), gameProfile);
