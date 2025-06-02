@@ -2,16 +2,18 @@ package top.o_illusions.mcmods.aira.deepseek;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import okhttp3.*;
-
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class DeepSeekHelper {
     protected  JsonObject requestTemplateJson = new JsonObject();
     protected JsonArray messageConText = new JsonArray();
     protected JsonObject systemCueWord = new JsonObject();
     protected final Gson gson = new Gson();
-    protected final OkHttpClient httpClient = new OkHttpClient();
+    protected final HttpClient httpClient = HttpClient.newHttpClient();
     protected String apiUrl;
     protected String apiKey;
     protected Model model;
@@ -47,31 +49,27 @@ public class DeepSeekHelper {
         requestJson.addProperty("max_tokens", maxTokens);
         requestJson.addProperty("top_p", 0.2);
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), requestJson.toString());
-        Request request = new Request.Builder()
-                .url(apiUrl)
-                .method("POST", requestBody)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "Bearer " + apiKey)
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(requestJson)))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("Authorization", "Bearer " + apiKey)
                 .build();
 
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
                 return null;
             }
-            if (response.body() == null) {
-                return null;
-            }
-            JsonObject responseJson = this.gson.fromJson(response.body().charStream(), JsonObject.class);
+            JsonObject responseJson = this.gson.fromJson(response.body(), JsonObject.class);
             return responseJson.get("choices").getAsJsonArray()
                     .get(0).getAsJsonObject()
                     .get("message").getAsJsonObject();
-        } catch (IOException ignored) {
+        } catch (Exception e) {
+            System.out.println(e);
         }
-
-
-    return null;
+        return null;
     }
 
 }
