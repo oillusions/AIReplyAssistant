@@ -29,9 +29,10 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("kotlin_loader_version")}")
 
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    include('com.squareup.okhttp3:okhttp:4.12.0') {
-        transitive = true
-    }
+    include('com.squareup.okhttp3:okhttp:4.12.0')
+            {
+                transitive = false
+            }
 }
 
 processResources {
