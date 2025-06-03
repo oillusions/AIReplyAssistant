@@ -41,10 +41,11 @@ public class DeepSeekHelper {
         this.systemCueWord.addProperty("content", cueWord);
     }
 
-    public void addMsg(Role role, String content) {
+    public void addMsg(Role role, String name, String content) {
         JsonObject tmpMagJson = new JsonObject();
-        tmpMagJson.addProperty("role", role.getValue());
         tmpMagJson.addProperty("content", content);
+        tmpMagJson.addProperty("role", role.getValue());
+        tmpMagJson.addProperty("name", name);
         messageConText.add(tmpMagJson);
     }
 

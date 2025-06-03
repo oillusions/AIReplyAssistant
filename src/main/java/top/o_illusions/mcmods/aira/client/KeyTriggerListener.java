@@ -66,6 +66,9 @@ public class KeyTriggerListener {
                     JsonArray reply = AiraClient.getInstance().getDeepSeek().getReplyCandidate();
                     if (reply != null && reply.size() != 1) {
                         client.player.networkHandler.sendChatMessage(reply.get(i).getAsString());
+                        JsonArray tmp = new JsonArray();
+                        tmp.add("空");
+                        AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                     } else {
                         client.player.sendMessage(Text.literal("还没有生成好呢!"));
                     }
