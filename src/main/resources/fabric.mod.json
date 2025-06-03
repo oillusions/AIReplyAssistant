@@ -3,8 +3,10 @@
   "id": "aira",
   "version": "${version}",
   "name": "AI Reply Assistant",
-  "description": "我不想说话",
-  "authors": [],
+  "description": "AI回复生成",
+  "authors": [
+    "O-Illusions"
+  ],
   "contact": {},
   "license": "GPL-3.0",
   "icon": "assets/aira/icon.png",
