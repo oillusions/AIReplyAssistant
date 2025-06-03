@@ -10,6 +10,7 @@ public class AiraClient implements ClientModInitializer {
     private final MinecraftClient client = MinecraftClient.getInstance();
     private final DeepSeek deepSeek = new DeepSeek();
     private final ReplyHud replyHud = new ReplyHud();
+    private boolean autoReply = false;
     private final KeyTriggerListener triggerListener = new KeyTriggerListener();
 
     public static AiraClient getInstance() {
@@ -23,8 +24,7 @@ public class AiraClient implements ClientModInitializer {
             deepSeek.onReceiveMessage(message.getString(), null);
         });
         ClientReceiveMessageEvents.CHAT.register(((text, signedMessage, gameProfile, parameters, instant) -> {
-                    deepSeek.onReceiveMessage(text.getString(), gameProfile);
-
+            deepSeek.onReceiveMessage(text.getString(), gameProfile);
         }));
 
     }
@@ -35,5 +35,13 @@ public class AiraClient implements ClientModInitializer {
 
     public ReplyHud getReplyHud() {
         return replyHud;
+    }
+
+    public void setAutoReply(boolean autoReply) {
+        this.autoReply = autoReply;
+    }
+
+    public boolean isAutoReply() {
+        return autoReply;
     }
 }

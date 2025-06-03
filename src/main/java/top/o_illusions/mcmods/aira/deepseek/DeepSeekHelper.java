@@ -72,13 +72,41 @@ public class DeepSeekHelper {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                return null;
-            }
-            JsonObject responseJson = this.gson.fromJson(response.body(), JsonObject.class);
-            return responseJson.get("choices").getAsJsonArray()
-                    .get(0).getAsJsonObject()
-                    .get("message").getAsJsonObject();
+            switch (response.statusCode()) {
+                case 200 -> {
+                    JsonObject responseJson = this.gson.fromJson(response.body(), JsonObject.class);
+                    return responseJson.get("choices").getAsJsonArray()
+                            .get(0).getAsJsonObject()
+                            .get("message").getAsJsonObject();
+                }
+                case 400 -> {
+                    //请求体格式错误
+                    System.err.println("请求体格式错误");
+                    break;
+                }
+                case 401 -> {
+                    //kay错误错误
+                    System.err.println("key错误");
+                }
+                case 402 -> {
+                    //余额不足
+                    System.err.println("余额不足");
+                }
+                case 422 -> {
+                    //请求体参数错误
+                    System.err.println("请求体参数错误");
+                }
+                case 429 -> {
+                    //请求速率上限
+                    System.err.println("速率上限");
+                }
+                case 500 -> {
+                    //服务器内部故障
+                }
+                case 503 -> {
+                    //服务器繁忙
+                }
+            };
         } catch (Exception e) {
             System.err.println(e);
         }

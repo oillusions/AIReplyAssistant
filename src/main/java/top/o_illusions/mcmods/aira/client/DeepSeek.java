@@ -32,9 +32,7 @@ public class DeepSeek {
                 .get(0).getAsJsonObject();
 
         String defaultCueWord =
-                "直接返回其内容," +
-                "回复已JsonArray的格式[直接返回文本就行， 不需要富文本格式]" +
-                "长度不得超过20字" +
+                "回复请使用JsonArray的格式,如下示例: ['你好!', '你好哦', '你好你好!'] " +
                 "玩家信息: [id:%s],游戏信息:[version:%s]".formatted(client.getGameProfile().getName(), client.getGameVersion());
 
         this.deepSeek = new DeepSeekHelper(
@@ -94,6 +92,9 @@ public class DeepSeek {
                 addMsg(GameRole.THIS, client.getGameProfile().getName(), messageContent);
             } else {
                 addMsg(GameRole.PLAYER, gameProfile.getName(), messageContent);
+                if (AiraClient.getInstance().isAutoReply()) {
+                    this.onTriggerGen();
+                }
             }
         }
     }
@@ -106,12 +107,15 @@ public class DeepSeek {
                 tmp.add("生成中");
                 AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 JsonObject response = this.deepSeek.request();
+                System.out.println(response.get("content").getAsString());
                 tmp = this.gson.fromJson(response.get("content").getAsString(), JsonArray.class);
                 if (MinecraftClient.getInstance().player != null) {
                     AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 }
+                if (AiraClient.getInstance().isAutoReply()) {
+                    client.player.networkHandler.sendChatMessage(tmp.get(0).getAsString());
+                }
             });
-
             this.current.start();
         } else {
             System.out.println("当前请求尚未结束");

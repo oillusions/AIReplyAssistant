@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.o_illusions.mcmods.aira.client.AiraClient;
 
 @Mixin(GameMenuScreen.class)
 public class GameMenuScreenMixin extends Screen {
@@ -18,9 +19,10 @@ public class GameMenuScreenMixin extends Screen {
     @Inject(method = "init", at = @At("HEAD"))
     public void init(CallbackInfo ci) {
         ButtonWidget config = this.addDrawableChild(
-                new ButtonWidget.Builder(Text.literal("自动回复"),
+                new ButtonWidget.Builder(Text.literal("自动回复:" + String.valueOf(AiraClient.getInstance().isAutoReply())),
                         (button) -> {
-
+                            AiraClient.getInstance().setAutoReply(!AiraClient.getInstance().isAutoReply());
+                            client.setScreen(null);
                         }).build());
 
         config.setWidth(textRenderer.getWidth("自动回复")+ 6);
