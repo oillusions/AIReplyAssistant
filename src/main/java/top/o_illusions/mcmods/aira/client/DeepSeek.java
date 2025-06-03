@@ -84,18 +84,18 @@ public class DeepSeek {
     }
 
 
-    public void onReceiveMessage(String messageContent, GameProfile gameProfile) {
-        if (gameProfile == null) {
-            addMsg(GameRole.SYSTEM, null, messageContent);
-        } else {
-            if (client.player != null && Objects.equals(gameProfile.getName(), client.player.getName().getString())) {
-                addMsg(GameRole.THIS, client.getGameProfile().getName(), messageContent);
-            } else {
-                addMsg(GameRole.PLAYER, gameProfile.getName(), messageContent);
-                if (AiraClient.getInstance().isAutoReply()) {
-                    this.onTriggerGen();
-                }
+    public void onReceiveMessage(String messageContent, String name, GameRole gameRole) {
+        if (client.getGameProfile().getName().equals(name)) {
+            addMsg(GameRole.THIS, name, messageContent);
+            return;
+        }
+        if (!client.getGameProfile().getName().equals(name) && gameRole != GameRole.SYSTEM) {
+            addMsg(GameRole.PLAYER, name, messageContent);
+            if (AiraClient.getInstance().isAutoReply()) {
+                onTriggerGen();
             }
+        } else {
+            addMsg(gameRole, gameRole.getGameRole(), messageContent);
         }
     }
 
@@ -126,13 +126,8 @@ public class DeepSeek {
 
     public void addMsg(GameRole gameRole, String name, String messageContent) {
         switch (gameRole) {
-            case PLAYER -> {
+            case PLAYER, THIS -> {
                 this.deepSeek.addMsg(gameRole.getDsRole(), name, messageContent);
-                break;
-            }
-            case THIS -> {
-                this.deepSeek.addMsg(gameRole.getDsRole(), name, messageContent);
-                break;
             }
             case SYSTEM -> {
                 this.deepSeek.addMsg(gameRole.getDsRole(), gameRole.getGameRole(), messageContent);

@@ -46,6 +46,7 @@ public class DeepSeekHelper {
         tmpMagJson.addProperty("content", content);
         tmpMagJson.addProperty("role", role.getValue());
         tmpMagJson.addProperty("name", name);
+
         messageConText.add(tmpMagJson);
     }
 

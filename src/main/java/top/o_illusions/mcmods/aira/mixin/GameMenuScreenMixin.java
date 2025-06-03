@@ -22,6 +22,7 @@ public class GameMenuScreenMixin extends Screen {
                 new ButtonWidget.Builder(Text.literal("自动回复:" + String.valueOf(AiraClient.getInstance().isAutoReply())),
                         (button) -> {
                             AiraClient.getInstance().setAutoReply(!AiraClient.getInstance().isAutoReply());
+                            System.out.println("自动回复: " + String.valueOf(AiraClient.getInstance().isAutoReply()));
                             client.setScreen(null);
                         }).build());
 

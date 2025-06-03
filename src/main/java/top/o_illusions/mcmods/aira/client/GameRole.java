@@ -3,9 +3,9 @@ package top.o_illusions.mcmods.aira.client;
 import top.o_illusions.mcmods.aira.deepseek.Role;
 
 public enum GameRole {
-    PLAYER(Role.ASSISTANT, "Player"),
+    PLAYER(Role.USER, "Player"),
     SYSTEM(Role.USER, "System"),
-    THIS(Role.USER, "This")
+    THIS(Role.ASSISTANT, "This")
     ;
     private final Role dsRole;
     private final String gameRole;
