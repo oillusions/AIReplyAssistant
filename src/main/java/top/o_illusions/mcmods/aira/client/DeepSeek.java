@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mojang.authlib.GameProfile;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import top.o_illusions.mcmods.aira.deepseek.DeepSeekHelper;
@@ -12,7 +11,6 @@ import top.o_illusions.mcmods.aira.deepseek.Model;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 public class DeepSeek {
     private final Path configPath = FabricLoader.getInstance().getConfigDir();
@@ -32,7 +30,7 @@ public class DeepSeek {
                 .get(0).getAsJsonObject();
 
         String defaultCueWord =
-                "回复请使用JsonArray的格式,如下示例: ['你好!', '你好哦', '你好你好!'] " +
+                "回复必须严格使用JsonArray的格式, 如下示例: [\"候选0\", \"候选1\", \"候选2\"]" +
                 "玩家信息: [id:%s],游戏信息:[version:%s]".formatted(client.getGameProfile().getName(), client.getGameVersion());
 
         this.deepSeek = new DeepSeekHelper(
@@ -85,18 +83,7 @@ public class DeepSeek {
 
 
     public void onReceiveMessage(String messageContent, String name, GameRole gameRole) {
-        if (client.getGameProfile().getName().equals(name)) {
-            addMsg(GameRole.THIS, name, messageContent);
-            return;
-        }
-        if (!client.getGameProfile().getName().equals(name) && gameRole != GameRole.SYSTEM) {
-            addMsg(GameRole.PLAYER, name, messageContent);
-            if (AiraClient.getInstance().isAutoReply()) {
-                onTriggerGen();
-            }
-        } else {
-            addMsg(gameRole, gameRole.getGameRole(), messageContent);
-        }
+        this.addMsg(gameRole, name, messageContent);
     }
 
     public void onTriggerGen() {
