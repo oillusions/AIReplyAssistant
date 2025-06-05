@@ -30,6 +30,8 @@ public class CueWordConfig implements Config<String> {
                 content = Files.readString(configFilePath);
             } else {
                 content = defaultCueWord;
+
+                save();
             }
             isModified = false;
         } catch (Exception e) {

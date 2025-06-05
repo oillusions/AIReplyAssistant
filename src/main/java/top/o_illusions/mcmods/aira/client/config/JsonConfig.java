@@ -42,6 +42,8 @@ public class JsonConfig<T extends JsonElement> implements Config<T> {
                 }
             } else {
                 config = (T) defaultConfig.deepCopy();
+
+                save();
             }
             isModified = false;
         } catch (Exception e) {
