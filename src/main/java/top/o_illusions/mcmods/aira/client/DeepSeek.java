@@ -55,7 +55,7 @@ public class DeepSeek {
                 AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 String response = this.deepSeek.request();
                 System.out.println(response);
-                tmp = this.gson.fromJson(response, JsonObject.class).get("response").getAsJsonArray();
+                tmp = this.gson.fromJson(response, JsonObject.class).get("responses").getAsJsonArray();
                 if (MinecraftClient.getInstance().player != null) {
                     AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 }
