@@ -16,11 +16,13 @@ public class DeepSeekHelper {
     protected String apiUrl;
     protected String apiKey;
     protected Model model;
+    protected int maxTokens;
+    protected ResponseType responseType;
 
     protected float top_p;
     protected float presence_penalty;
     protected float frequency_penalty;
-    protected int maxTokens;
+
 
 
 
@@ -29,6 +31,7 @@ public class DeepSeekHelper {
         this.apiKey = apiKey;
         this.model = model;
         this.maxTokens = maxTokens;
+        this.responseType = ResponseType.TEXT;
 
         this.top_p = 0.2f;
         this.presence_penalty = 0.5f;
@@ -53,15 +56,19 @@ public class DeepSeekHelper {
     public JsonObject requestToBody() {
         JsonObject requestJson = requestTemplateJson.deepCopy();
         JsonArray dialogueMessage = new JsonArray();
+        JsonObject responseFormat = new JsonObject();
 
         dialogueMessage.add(systemCueWord);
         dialogueMessage.addAll(messageConText);
+
+        responseFormat.addProperty("type", responseType.getValue());
 
         requestJson.add("messages", dialogueMessage);
         requestJson.addProperty("max_tokens", maxTokens);
         requestJson.addProperty("top_p", top_p);
         requestJson.addProperty("presence_penalty", presence_penalty);
         requestJson.addProperty("frequency_penalty", frequency_penalty);
+        requestJson.add("response_format", responseFormat);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
@@ -143,6 +150,10 @@ public class DeepSeekHelper {
         this.messageConText = messageConText;
     }
 
+    public void setResponseType(ResponseType type) {
+        this.responseType = type;
+    }
+
     public float getTop_p() {
         return top_p;
     }
@@ -166,4 +177,6 @@ public class DeepSeekHelper {
     public JsonArray getMessageConText() {
         return messageConText;
     }
+
+    public ResponseType getResponseType() {return responseType;}
 }

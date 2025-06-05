@@ -9,6 +9,7 @@ import top.o_illusions.mcmods.aira.Aira;
 import top.o_illusions.mcmods.aira.client.config.PresetManager;
 import top.o_illusions.mcmods.aira.deepseek.DeepSeekHelper;
 import top.o_illusions.mcmods.aira.deepseek.Model;
+import top.o_illusions.mcmods.aira.deepseek.ResponseType;
 
 public class DeepSeek {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -32,6 +33,7 @@ public class DeepSeek {
                 style.get("max_tokens").getAsInt(),
                 cueWord
         );
+        deepSeek.setResponseType(ResponseType.JSON_OBJECT);
         deepSeek.setTop_p(style.get("top_p").getAsFloat());
         deepSeek.setPresencePenalty(style.get("presence_penalty").getAsFloat());
         deepSeek.setFrequencyPenalty(style.get("frequency_penalty").getAsFloat());
@@ -53,7 +55,7 @@ public class DeepSeek {
                 AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 String response = this.deepSeek.request();
                 System.out.println(response);
-                tmp = this.gson.fromJson(response, JsonArray.class);
+                tmp = this.gson.fromJson(response, JsonObject.class).get("response").getAsJsonArray();
                 if (MinecraftClient.getInstance().player != null) {
                     AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 }
