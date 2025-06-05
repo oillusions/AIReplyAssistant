@@ -36,8 +36,6 @@ public class DeepSeek {
         deepSeek.setPresencePenalty(style.get("presence_penalty").getAsFloat());
         deepSeek.setFrequencyPenalty(style.get("frequency_penalty").getAsFloat());
 
-        System.out.println("身份预设: " + gson.toJson(style) + ", 提示词预设: " + cueWord);
-
         replyCandidate = new JsonArray();
         replyCandidate.add("空");
     }
