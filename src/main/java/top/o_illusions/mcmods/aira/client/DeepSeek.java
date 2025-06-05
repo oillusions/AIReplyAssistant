@@ -22,8 +22,8 @@ public class DeepSeek {
 
     public DeepSeek() {
         airaConfig = Aira.AIRA_CONFIG.getConfig().deepCopy();
-        style = PresetManager.getStyle("default").getConfig().deepCopy();
-        cueWord = PresetManager.getCueWord("default").getConfig();
+        style = PresetManager.getStyle(airaConfig.get("current").getAsString()).getConfig().deepCopy();
+        cueWord = PresetManager.getCueWord(airaConfig.get("current").getAsString()).getConfig();
 
         deepSeek = new DeepSeekHelper(
                 airaConfig.get("api_url").getAsString(),
@@ -60,7 +60,9 @@ public class DeepSeek {
                     AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
                 }
                 if (AiraClient.getInstance().isAutoReply()) {
-                    client.player.networkHandler.sendChatMessage(tmp.get(0).getAsString());
+                    if (client.player != null) {
+                        client.player.networkHandler.sendChatMessage(tmp.get(0).getAsString());
+                    }
                 }
             });
             this.current.start();

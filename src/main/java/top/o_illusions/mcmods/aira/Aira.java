@@ -12,7 +12,7 @@ import java.nio.file.Path;
 public class Aira implements ModInitializer {
     public static final String MOD_ID = "aira";
     public static final Path CONFIGS_PATH = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID);
-    public static final JsonConfig<JsonObject> AIRA_CONFIG = new JsonConfig<>(CONFIGS_PATH, defaultConfig());
+    public static final JsonConfig<JsonObject> AIRA_CONFIG = new JsonConfig<>(CONFIGS_PATH.resolve(MOD_ID + ".json"), defaultConfig());
 
     @Override
     public void onInitialize() {

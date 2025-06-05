@@ -66,6 +66,7 @@ public class PresetManager {
                     }
                     <LOCK>
                     输出要求: [
+                        生成2-6个回复
                         禁止输出富文本样式
                         禁止输出非JsonArray格式
                         必须严格遵守JsonArray格式的输出
