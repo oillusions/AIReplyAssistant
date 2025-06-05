@@ -1,8 +1,11 @@
 package top.o_illusions.mcmods.aira.client;
 
+import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import top.o_illusions.mcmods.aira.Aira;
 import top.o_illusions.mcmods.aira.hud.ReplyHud;
 
 import java.util.HashMap;
