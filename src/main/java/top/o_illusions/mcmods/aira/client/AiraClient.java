@@ -1,13 +1,16 @@
 package top.o_illusions.mcmods.aira.client;
 
-import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import top.o_illusions.mcmods.aira.Aira;
+import top.o_illusions.mcmods.aira.client.config.PresetManager;
 import top.o_illusions.mcmods.aira.hud.ReplyHud;
+import top.o_illusions.mcmods.aira.util.TextFiller;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,7 +33,7 @@ public class AiraClient implements ClientModInitializer {
         }
 
         // 匹配两种格式：<Name> Message 或 [Name] Message
-        Pattern pattern = Pattern.compile("^(?:\\s*<([^>]+)>\\s*|\\s*\\[([^\\]]+)\\]\\s*)(.*)$");
+        Pattern pattern = Pattern.compile("^(?:\\s*<([^>]+)>\\s*|\\s*\\[([^]]+)]\\s*)(.*)$");
         Matcher matcher = pattern.matcher(input.trim());
 
         if (!matcher.matches()) {
@@ -83,6 +86,15 @@ public class AiraClient implements ClientModInitializer {
             deepSeek.onReceiveMessage(text.getString(), null, GameRole.SYSTEM);
         }));
 
+    }
+
+    private void initFillerKey() {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        TextFiller filler = PresetManager.getFiller();
+
+        filler.register("playerName", client.getGameProfile()::getName);
+        filler.register("currentTime", () ->timeFormatter.format((LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault()))));
+        filler.register("gameVersion", client::getGameVersion);
     }
 
     public static AiraClient getInstance() {

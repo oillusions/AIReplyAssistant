@@ -119,6 +119,10 @@ public class DeepSeekHelper {
                 .get("content").getAsString();
     }
 
+    public void setMaxTokens(int maxTokens) {
+        this.maxTokens = maxTokens;
+    }
+
     public void setTop_p(float top_p) {
         this.top_p = top_p;
     }
@@ -131,8 +135,12 @@ public class DeepSeekHelper {
         this.presence_penalty = presence_penalty;
     }
 
-    public void setMaxTokens(int maxTokens) {
-        this.maxTokens = maxTokens;
+    public void setSystemCueWord(JsonObject systemCueWord) {
+        this.systemCueWord = systemCueWord;
+    }
+
+    public void setMessageConText(JsonArray messageConText) {
+        this.messageConText = messageConText;
     }
 
     public float getTop_p() {
@@ -151,19 +159,11 @@ public class DeepSeekHelper {
         return maxTokens;
     }
 
-    public void setSystemCueWord(JsonObject systemCueWord) {
-        this.systemCueWord = systemCueWord;
-    }
-
     public JsonObject getSystemCueWord() {
         return systemCueWord;
     }
 
     public JsonArray getMessageConText() {
         return messageConText;
-    }
-
-    public void setMessageConText(JsonArray messageConText) {
-        this.messageConText = messageConText;
     }
 }

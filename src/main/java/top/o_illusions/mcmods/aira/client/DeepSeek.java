@@ -4,83 +4,43 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import top.o_illusions.mcmods.aira.Aira;
+import top.o_illusions.mcmods.aira.client.config.PresetManager;
 import top.o_illusions.mcmods.aira.deepseek.DeepSeekHelper;
 import top.o_illusions.mcmods.aira.deepseek.Model;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public class DeepSeek {
-    private final Path configPath = FabricLoader.getInstance().getConfigDir();
-    private final Path airaConfigDir = configPath.resolve("aira");
-    private final Path airaConfigFile = airaConfigDir.resolve("aira.json");
     private final MinecraftClient client = MinecraftClient.getInstance();
     private final DeepSeekHelper deepSeek;
     private JsonArray replyCandidate;
     private Thread current = null;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final JsonObject deepSeekConfig;
-    private final JsonObject defaultDeepSeekStyle;
+    private final JsonObject airaConfig;
+    private final JsonObject style;
+    private String cueWord;
 
     public DeepSeek() {
-        this.deepSeekConfig = readConfig();
-        this.defaultDeepSeekStyle = readConfig().get("styles").getAsJsonArray()
-                .get(0).getAsJsonObject();
+        airaConfig = Aira.AIRA_CONFIG.getConfig().deepCopy();
+        style = PresetManager.getStyle("default").getConfig().deepCopy();
+        cueWord = PresetManager.getCueWord("default").getConfig();
 
-        String defaultCueWord =
-                "回复必须严格使用JsonArray的格式, 如下示例: [\"候选0\", \"候选1\", \"候选2\"]" +
-                "玩家信息: [id:%s],游戏信息:[version:%s]".formatted(client.getGameProfile().getName(), client.getGameVersion());
-
-        this.deepSeek = new DeepSeekHelper(
-                deepSeekConfig.get("api_url").getAsString(),
-                deepSeekConfig.get("api_key").getAsString(),
+        deepSeek = new DeepSeekHelper(
+                airaConfig.get("api_url").getAsString(),
+                airaConfig.get("api_key").getAsString(),
                 Model.CHAT,
-                defaultDeepSeekStyle.get("max_tokens").getAsInt(),
-                defaultDeepSeekStyle.get("cue").getAsString() + defaultCueWord);
+                style.get("max_tokens").getAsInt(),
+                cueWord
+        );
+        deepSeek.setTop_p(style.get("top_p").getAsFloat());
+        deepSeek.setPresencePenalty(style.get("presence_penalty").getAsFloat());
+        deepSeek.setFrequencyPenalty(style.get("frequency_penalty").getAsFloat());
 
-        deepSeek.setTop_p(defaultDeepSeekStyle.get("top_p").getAsFloat());
-        deepSeek.setPresencePenalty(defaultDeepSeekStyle.get("presence_penalty").getAsFloat());
-        deepSeek.setFrequencyPenalty(defaultDeepSeekStyle.get("frequency_penalty").getAsFloat());
-
-        System.out.println("加载DeepSeek配置: %s".formatted(this.gson.toJson(defaultDeepSeekStyle)));
+        System.out.println("身份预设: " + gson.toJson(style) + ", 提示词预设: " + cueWord);
 
         replyCandidate = new JsonArray();
         replyCandidate.add("空");
     }
-
-    private JsonObject readConfig() {
-        if (!Files.exists(airaConfigDir)) {
-            try {
-                System.out.println("创建目录中");
-                JsonObject defaultConfigFile = new JsonObject();
-                defaultConfigFile.addProperty("api_url", "https://api.deepseek.com/chat/completions");
-                defaultConfigFile.addProperty("api_key", "sk-xxx");
-                JsonArray defaultStyles = new JsonArray();
-                JsonObject defaultStyle = new JsonObject();
-                defaultStyle.addProperty("cue", "你好DeepSeek! 我希望你现在作为我在Minecraft的对话助手[你可以自称为我], 在你接收到消息[其他玩家或系统发送的]后, 帮助我生成2-6个从幽默到正常的回复,");
-                defaultStyle.addProperty("max_tokens", 100);
-                defaultStyle.addProperty("top_p", 0.2);
-                defaultStyle.addProperty("presence_penalty", 0.2);
-                defaultStyle.addProperty("frequency_penalty", 0.2);
-                defaultStyles.add(defaultStyle);
-                defaultConfigFile.add("styles", defaultStyles);
-                Files.createDirectories(airaConfigDir);
-                Files.write(airaConfigFile, this.gson.toJson(defaultConfigFile).getBytes());
-                return readConfig();
-            } catch (Exception e) {
-                System.err.println(e);
-            }
-        }
-        try {
-            return this.gson.fromJson(Files.readString(airaConfigFile), JsonObject.class);
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        return null;
-    }
-
 
     public void onReceiveMessage(String messageContent, String name, GameRole gameRole) {
         this.addMsg(gameRole, name, messageContent);
@@ -130,12 +90,11 @@ public class DeepSeek {
         return replyCandidate;
     }
 
-    public JsonObject getDeepSeekConfig() {
-        return deepSeekConfig.deepCopy();
+    public JsonObject getStyle() {
+        return style;
     }
 
-    public JsonObject getDeepSeekStyle() {
-        return defaultDeepSeekStyle.deepCopy();
+    public String getCueWord() {
+        return cueWord;
     }
-
 }

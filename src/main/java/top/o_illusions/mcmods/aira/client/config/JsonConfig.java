@@ -54,7 +54,6 @@ public class JsonConfig<T extends JsonElement> implements Config<T> {
     public void save() {
         try {
             if (Files.exists(configFilePath)) {
-
                 Files.writeString(configFilePath, gson.toJson(config));
                 isModified = false;
             } else {
@@ -71,6 +70,8 @@ public class JsonConfig<T extends JsonElement> implements Config<T> {
     @Override
     public void reset() {
         config = deepCopyJson(defaultConfig);
+        isModified = false;
+        notifyListener();
     }
 
     @Override
@@ -112,6 +113,7 @@ public class JsonConfig<T extends JsonElement> implements Config<T> {
         return configFilePath.getFileName().toString();
     }
 
+    @Override
     public boolean isModified() {
         return isModified;
     }

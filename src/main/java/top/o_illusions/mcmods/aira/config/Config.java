@@ -17,5 +17,7 @@ public interface Config<T> {
 
     void addChangeListener(Consumer<T> listener);
 
+    boolean isModified();
+
 
 }
