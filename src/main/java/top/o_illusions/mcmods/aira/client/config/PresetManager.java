@@ -74,6 +74,7 @@ public class PresetManager {
                         必须严格遵守JsonArray格式的输出
                         必须严格遵守JsonArray格式的输出
                         必须严格遵守JsonArray格式的输出
+                        输出格式 '["候选消息0", "候选消息1", "候选消息2"]'
                     ]
                     </LOCK>
                 }""";
