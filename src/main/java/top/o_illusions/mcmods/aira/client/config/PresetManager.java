@@ -87,7 +87,7 @@ public class PresetManager {
     public static JsonObject getDefaultStyle() {
         JsonObject retJson = new JsonObject();
         retJson.addProperty("max_tokens", 512);
-        retJson.addProperty("top_p", 0.2);
+        retJson.addProperty("top_p", 0.6);
         retJson.addProperty("presence_penalty", 0.2);
         retJson.addProperty("frequency_penalty", 0.2);
 

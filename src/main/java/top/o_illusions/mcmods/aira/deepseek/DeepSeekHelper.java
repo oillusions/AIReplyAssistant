@@ -1,182 +1,148 @@
 package top.o_illusions.mcmods.aira.deepseek;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class DeepSeekHelper {
-    protected  JsonObject requestTemplateJson = new JsonObject();
-    protected JsonArray messageConText = new JsonArray();
-    protected JsonObject systemCueWord = new JsonObject();
-    protected final Gson gson = new Gson();
-    protected final HttpClient httpClient = HttpClient.newHttpClient();
-    protected String apiUrl;
-    protected String apiKey;
-    protected Model model;
-    protected int maxTokens;
-    protected ResponseType responseType;
+    private final Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+    private final DeepSeekConfig config;
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private JsonArray messageContext = new JsonArray();
 
-    protected float top_p;
-    protected float presence_penalty;
-    protected float frequency_penalty;
+    private final List<Consumer<DeepSeekResponse>> listeners = new ArrayList<>();
 
 
-
-
-    public DeepSeekHelper(String apiUrl, String apiKey, Model model, int maxTokens, String cueWord) {
-        this.apiUrl = apiUrl;
-        this.apiKey = apiKey;
-        this.model = model;
-        this.maxTokens = maxTokens;
-        this.responseType = ResponseType.TEXT;
-
-        this.top_p = 0.2f;
-        this.presence_penalty = 0.5f;
-        this.frequency_penalty = 0.5f;
-
-
-        requestTemplateJson.addProperty("model", this.model.getValue());
-
-        this.systemCueWord.addProperty("role", "system");
-        this.systemCueWord.addProperty("content", cueWord);
+    public DeepSeekHelper(DeepSeekConfig config) {
+        this.config = config;
     }
 
-    public void addMsg(Role role, String name, String content) {
-        JsonObject tmpMagJson = new JsonObject();
-        tmpMagJson.addProperty("content", content);
-        tmpMagJson.addProperty("role", role.getValue());
-        tmpMagJson.addProperty("name", name);
-
-        messageConText.add(tmpMagJson);
+    public void addMessage(Role role, String content) {
+        addMessage(role, null, content);
     }
 
-    public JsonObject requestToBody() {
-        JsonObject requestJson = requestTemplateJson.deepCopy();
-        JsonArray dialogueMessage = new JsonArray();
-        JsonObject responseFormat = new JsonObject();
+    public void addMessage(Role role, String name, String content) {
+        JsonObject message = new JsonObject();
 
-        dialogueMessage.add(systemCueWord);
-        dialogueMessage.addAll(messageConText);
+        message.addProperty("content", content);
+        message.addProperty("role", role.getValue());
+        if (name != null && !name.isBlank()) {
+            message.addProperty("name", name);
+        }
 
-        responseFormat.addProperty("type", responseType.getValue());
+        messageContext.add(message);
+    }
 
-        requestJson.add("messages", dialogueMessage);
-        requestJson.addProperty("max_tokens", maxTokens);
-        requestJson.addProperty("top_p", top_p);
-        requestJson.addProperty("presence_penalty", presence_penalty);
-        requestJson.addProperty("frequency_penalty", frequency_penalty);
-        requestJson.add("response_format", responseFormat);
+    protected JsonObject buildRequestBody() {
+        JsonObject requestBody = new JsonObject();
+        JsonObject systemMessage = new JsonObject();
+        JsonObject resultFormat = new JsonObject();
+        JsonArray messages = new JsonArray();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(requestJson)))
+
+        systemMessage.addProperty("content", config.getSystemPrompt());
+        systemMessage.addProperty("role", Role.SYSTEM.getValue());
+
+        messages.add(systemMessage);
+        messages.addAll(messageContext);
+
+        resultFormat.addProperty("type", config.getFormat().getValue());
+
+        requestBody.addProperty("model", config.getModel().getValue());
+        requestBody.addProperty("stream", config.isStream());
+        requestBody.add("response_format", resultFormat);
+
+        requestBody.addProperty("max_tokens", config.getMaxTokens());
+        requestBody.addProperty("top_p", config.getTopP());
+        requestBody.addProperty("presence_penalty", config.getPresencePenalty());
+        requestBody.addProperty("frequency_penalty", config.getFrequencyPenalty());
+
+        requestBody.add("messages", messages);
+
+        return requestBody;
+    }
+
+    protected HttpRequest buildRequest(JsonObject requestBody) {
+
+        return HttpRequest.newBuilder()
+                .uri(URI.create(config.getApiUrl()))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
+                .header("Authorization", "Bearer " + config.getApiKey())
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(requestBody)))
                 .build();
+    }
 
-        try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            switch (response.statusCode()) {
-                case 200 -> {
-                    return this.gson.fromJson(response.body(), JsonObject.class);
-                }
-                case 400 -> {
-                    //请求体格式错误
-                    System.err.println("请求体格式错误");
-                    break;
-                }
-                case 401 -> {
-                    //kay错误错误
-                    System.err.println("key错误");
-                }
-                case 402 -> {
-                    //余额不足
-                    System.err.println("余额不足");
-                }
-                case 422 -> {
-                    //请求体参数错误
-                    System.err.println("请求体参数错误");
-                }
-                case 429 -> {
-                    //请求速率上限
-                    System.err.println("速率上限");
-                }
-                case 500 -> {
-                    //服务器内部故障
-                }
-                case 503 -> {
-                    //服务器繁忙
-                }
-            };
-        } catch (Exception e) {
-            System.err.println(e);
+    public void request() {
+        HttpRequest request = buildRequest(buildRequestBody());
+
+        if (config.isRequestMode()) {
+            if (config.isStream()) {
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
+                        .thenAccept(response -> {
+                            try (InputStream stream = response.body()) {
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    if (line.startsWith("data: ")) {
+                                        notifyListener(new DeepSeekStreamResponse(gson.fromJson(line.substring(6), JsonObject.class), response.statusCode()));
+                                    } else if (line.startsWith("data: [DONE]")) {
+                                        notifyListener(null);
+                                    }
+                                }
+                            } catch (Exception e) {
+
+                            }
+                        });
+            } else {
+                httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                        .thenAccept(response -> {
+                            notifyListener(new DeepSeekNonStreamResponse(gson.fromJson(response.body(), JsonObject.class), response.statusCode()));
+                        });
+            }
+        } else {
+            try {
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                notifyListener(new DeepSeekNonStreamResponse(gson.fromJson(response.body(), JsonObject.class), response.statusCode()));
+
+            } catch (Exception e) {
+
+            }
         }
-        return null;
     }
 
-    public String request() {
-        return requestToBody()
-                .get("choices").getAsJsonArray()
-                .get(0).getAsJsonObject()
-                .get("message").getAsJsonObject()
-                .get("content").getAsString();
+
+
+    public void addListener(Consumer<DeepSeekResponse> listener) {
+        listeners.add(listener);
     }
 
-    public void setMaxTokens(int maxTokens) {
-        this.maxTokens = maxTokens;
+    private void notifyListener(DeepSeekResponse response) {
+        for (Consumer<DeepSeekResponse> listener : listeners) {
+            listener.accept(response);
+        }
     }
 
-    public void setTop_p(float top_p) {
-        this.top_p = top_p;
+    public void resetConversation() {
+        messageContext = new JsonArray();
     }
 
-    public void setFrequencyPenalty(float frequency_penalty) {
-        this.frequency_penalty = frequency_penalty;
+    public DeepSeekConfig getConfig() {
+        return config;
     }
 
-    public void setPresencePenalty(float presence_penalty) {
-        this.presence_penalty = presence_penalty;
+    public JsonArray getMessageContext() {
+        return messageContext;
     }
-
-    public void setSystemCueWord(JsonObject systemCueWord) {
-        this.systemCueWord = systemCueWord;
-    }
-
-    public void setMessageConText(JsonArray messageConText) {
-        this.messageConText = messageConText;
-    }
-
-    public void setResponseType(ResponseType type) {
-        this.responseType = type;
-    }
-
-    public float getTop_p() {
-        return top_p;
-    }
-
-    public float getFrequencyPenalty() {
-        return frequency_penalty;
-    }
-
-    public float getPresencePenalty() {
-        return presence_penalty;
-    }
-
-    public int getMaxTokens() {
-        return maxTokens;
-    }
-
-    public JsonObject getSystemCueWord() {
-        return systemCueWord;
-    }
-
-    public JsonArray getMessageConText() {
-        return messageConText;
-    }
-
-    public ResponseType getResponseType() {return responseType;}
 }

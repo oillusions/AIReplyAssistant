@@ -7,65 +7,73 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import top.o_illusions.mcmods.aira.Aira;
 import top.o_illusions.mcmods.aira.client.config.PresetManager;
+import top.o_illusions.mcmods.aira.deepseek.DeepSeekConfig;
 import top.o_illusions.mcmods.aira.deepseek.DeepSeekHelper;
 import top.o_illusions.mcmods.aira.deepseek.Model;
-import top.o_illusions.mcmods.aira.deepseek.ResponseType;
+import top.o_illusions.mcmods.aira.deepseek.ResultFormat;
 
 public class DeepSeek {
     private final MinecraftClient client = MinecraftClient.getInstance();
     private final DeepSeekHelper deepSeek;
     private JsonArray replyCandidate;
-    private Thread current = null;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final JsonObject airaConfig;
     private final JsonObject style;
-    private String cueWord;
+    private final String cueWord;
+    private boolean complete = true;
 
     public DeepSeek() {
         airaConfig = Aira.AIRA_CONFIG.getConfig().deepCopy();
         style = PresetManager.getStyle(airaConfig.get("current").getAsString()).getConfig().deepCopy();
-        cueWord = PresetManager.getCueWord(airaConfig.get("current").getAsString()).getConfig();
+        cueWord = PresetManager.getFiller().filler(PresetManager.getCueWord(airaConfig.get("current").getAsString()).getConfig());
 
-        deepSeek = new DeepSeekHelper(
-                airaConfig.get("api_url").getAsString(),
-                airaConfig.get("api_key").getAsString(),
-                Model.CHAT,
-                style.get("max_tokens").getAsInt(),
-                cueWord
-        );
-        deepSeek.setResponseType(ResponseType.JSON_OBJECT);
-        deepSeek.setTop_p(style.get("top_p").getAsFloat());
-        deepSeek.setPresencePenalty(style.get("presence_penalty").getAsFloat());
-        deepSeek.setFrequencyPenalty(style.get("frequency_penalty").getAsFloat());
+        DeepSeekConfig deepSeekConfig = new DeepSeekConfig.Builder()
+                .requestMode(true)
+                .apiUrl(airaConfig.get("api_url").getAsString())
+                .apiKey(airaConfig.get("api_key").getAsString())
+                .model(Model.CHAT)
+                .format(ResultFormat.JSON_OBJECT)
+                .stream(false)
+
+                .maxTokens(style.get("max_tokens").getAsInt())
+                .topP(style.get("top_p").getAsFloat())
+                .presencePenalty(style.get("presence_penalty").getAsFloat())
+                .frequencyPenalty(style.get("frequency_penalty").getAsFloat())
+                .systemPrompt(cueWord)
+                .build();
+        deepSeek = new DeepSeekHelper(deepSeekConfig);
+        deepSeek.addListener((response -> {
+            try {
+                complete = true;
+                JsonArray reply = gson.fromJson(response.getContent(), JsonObject.class).getAsJsonArray("responses");
+                System.out.println(gson.toJson(reply));
+                replyCandidate = reply;
+                if (AiraClient.getInstance().isAutoReply()) {
+                    if (client.player != null) {
+                        client.player.networkHandler.sendChatMessage(reply.get(0).getAsString());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+        }));
 
         replyCandidate = new JsonArray();
         replyCandidate.add("空");
     }
 
     public void onReceiveMessage(String messageContent, String name, GameRole gameRole) {
-        this.addMsg(gameRole, name, messageContent);
+        addMsg(gameRole, name, messageContent);
     }
 
     public void onTriggerGen() {
-        if (this.current == null || !this.current.isAlive()) {
+        if (complete) {
             System.out.println("触发生成");
-            this.current = new Thread(() -> {
-                JsonArray tmp = new JsonArray();
-                tmp.add("生成中");
-                AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
-                String response = this.deepSeek.request();
-                System.out.println(response);
-                tmp = this.gson.fromJson(response, JsonObject.class).get("responses").getAsJsonArray();
-                if (MinecraftClient.getInstance().player != null) {
-                    AiraClient.getInstance().getDeepSeek().setReplyCandidate(tmp);
-                }
-                if (AiraClient.getInstance().isAutoReply()) {
-                    if (client.player != null) {
-                        client.player.networkHandler.sendChatMessage(tmp.get(0).getAsString());
-                    }
-                }
-            });
-            this.current.start();
+            complete = false;
+            deepSeek.request();
+
+            replyCandidate = new JsonArray();
+            replyCandidate.add("生成中");
         } else {
             System.out.println("当前请求尚未结束");
         }
@@ -76,10 +84,10 @@ public class DeepSeek {
     public void addMsg(GameRole gameRole, String name, String messageContent) {
         switch (gameRole) {
             case PLAYER, THIS -> {
-                this.deepSeek.addMsg(gameRole.getDsRole(), name, messageContent);
+                deepSeek.addMessage(gameRole.getDsRole(), name, messageContent);
             }
             case SYSTEM -> {
-                this.deepSeek.addMsg(gameRole.getDsRole(), gameRole.getGameRole(), messageContent);
+                deepSeek.addMessage(gameRole.getDsRole(), gameRole.getGameRole(), messageContent);
             }
         }
     }
@@ -98,5 +106,9 @@ public class DeepSeek {
 
     public String getCueWord() {
         return cueWord;
+    }
+
+    public boolean isComplete() {
+        return complete;
     }
 }

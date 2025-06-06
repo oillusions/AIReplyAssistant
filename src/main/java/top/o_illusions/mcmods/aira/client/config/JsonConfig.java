@@ -94,7 +94,7 @@ public class JsonConfig<T extends JsonElement> implements Config<T> {
 
     @Override
     public void addChangeListener(Consumer<T> listener) {
-
+        listeners.add(listener);
     }
 
     private void notifyListener() {

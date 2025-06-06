@@ -2,6 +2,7 @@ package top.o_illusions.mcmods.aira.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import top.o_illusions.mcmods.aira.client.config.PresetManager;
 import top.o_illusions.mcmods.aira.hud.ReplyHud;
@@ -19,10 +20,15 @@ import java.util.regex.Pattern;
 public class AiraClient implements ClientModInitializer {
     private static AiraClient instance;
     private final MinecraftClient client = MinecraftClient.getInstance();
-    private final DeepSeek deepSeek = new DeepSeek();
+    private final DeepSeek deepSeek;
     private final ReplyHud replyHud = new ReplyHud();
     private boolean autoReply = false;
     private final KeyTriggerListener triggerListener = new KeyTriggerListener();
+
+    public AiraClient() {
+        initFillerKey();
+        deepSeek = new DeepSeek();
+    }
 
     public static Map<String, String> extractNameAndMessage(String input) {
         Map<String, String> result = new HashMap<>();
@@ -89,12 +95,13 @@ public class AiraClient implements ClientModInitializer {
     }
 
     private void initFillerKey() {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
         TextFiller filler = PresetManager.getFiller();
 
         filler.register("playerName", client.getGameProfile()::getName);
         filler.register("currentTime", () ->timeFormatter.format((LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault()))));
-        filler.register("gameVersion", client::getGameVersion);
+        filler.register("gameVersion", FabricLoader.getInstance().getModContainer("minecraft").orElseThrow().getMetadata().getVersion()::getFriendlyString);
+
     }
 
     public static AiraClient getInstance() {

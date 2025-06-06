@@ -1,13 +1,13 @@
 package top.o_illusions.mcmods.aira.deepseek;
 
-public enum ResponseType {
+public enum ResultFormat {
     TEXT("text"),
     JSON_OBJECT("json_object");
 
 
     private final String value;
 
-    ResponseType(String value) {
+    ResultFormat(String value) {
         this.value = value;
     }
 
