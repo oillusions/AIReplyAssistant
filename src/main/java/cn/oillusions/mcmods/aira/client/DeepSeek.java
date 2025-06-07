@@ -1,5 +1,6 @@
 package cn.oillusions.mcmods.aira.client;
 
+import cn.oillusions.mcmods.aira.deepseek.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -7,10 +8,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import cn.oillusions.mcmods.aira.Aira;
 import cn.oillusions.mcmods.aira.client.config.PresetManager;
-import cn.oillusions.mcmods.aira.deepseek.DeepSeekConfig;
-import cn.oillusions.mcmods.aira.deepseek.DeepSeekContext;
-import cn.oillusions.mcmods.aira.deepseek.Model;
-import cn.oillusions.mcmods.aira.deepseek.ResultFormat;
 
 public class DeepSeek {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -19,13 +16,16 @@ public class DeepSeek {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final JsonObject airaConfig;
     private final JsonObject style;
-    private final String cueWord;
+    private final String prompt;
+    private final String brainwashPrompt;
     private boolean complete = true;
 
     public DeepSeek() {
         airaConfig = Aira.AIRA_CONFIG.getConfig().deepCopy();
         style = PresetManager.getStyle(airaConfig.get("current").getAsString()).getConfig().deepCopy();
-        cueWord = PresetManager.getFiller().filler(PresetManager.getCueWord(airaConfig.get("current").getAsString()).getConfig());
+        prompt = PresetManager.getFiller().filler(PresetManager.getPrompt(airaConfig.get("current").getAsString()).getConfig());
+        brainwashPrompt = PresetManager.getFiller().filler(PresetManager.getBrainwashPrompt(airaConfig.get("current").getAsString()).getConfig());
+
 
         DeepSeekConfig deepSeekConfig = new DeepSeekConfig.Builder()
                 .requestMode(true)
@@ -39,7 +39,7 @@ public class DeepSeek {
                 .topP(style.get("top_p").getAsFloat())
                 .presencePenalty(style.get("presence_penalty").getAsFloat())
                 .frequencyPenalty(style.get("frequency_penalty").getAsFloat())
-                .systemPrompt(cueWord)
+                .systemPrompt(prompt)
                 .build();
         deepSeek = new DeepSeekContext(deepSeekConfig);
         deepSeek.addListener((response -> {
@@ -55,6 +55,8 @@ public class DeepSeek {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                deepSeek.addMessage(Role.SYSTEM, brainwashPrompt);
+                onTriggerGen();
             }
         }));
 
@@ -104,8 +106,8 @@ public class DeepSeek {
         return style;
     }
 
-    public String getCueWord() {
-        return cueWord;
+    public String getPrompt() {
+        return prompt;
     }
 
     public boolean isComplete() {

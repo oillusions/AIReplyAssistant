@@ -18,8 +18,12 @@ public class PresetManager {
         return filler;
     }
 
-    public static CueWordConfig getCueWord(String cueWordPresetName) {
-        return getPreset(cueWordPresetName).cueWord();
+    public static CueWordConfig getPrompt(String presetName) {
+        return getPreset(presetName).prompt();
+    }
+
+    public static CueWordConfig getBrainwashPrompt(String presetName) {
+        return getPreset(presetName).brainwashPrompt;
     }
 
     public static JsonConfig<JsonObject> getStyle(String cueWordPresetName) {
@@ -31,16 +35,34 @@ public class PresetManager {
             return cueWordConfigMap.get(cueWordPresetName);
         } else {
             Path newCueWordConfigFile = CUEWORDS_PATH.resolve(cueWordPresetName);
-            CueWordConfig presetCueWord = new CueWordConfig(newCueWordConfigFile.resolve("presetCueWord.txt"), getDefaultCueWord());
+            CueWordConfig presetCueWord = new CueWordConfig(newCueWordConfigFile.resolve("presetPrompt.txt"), getDefaultPrompt());
+            CueWordConfig brainwashPrompt = new CueWordConfig(newCueWordConfigFile.resolve("presetBrainwashPrompt.txt"), getDefaultBrainwashPrompt());
             JsonConfig<JsonObject> presetStyle = new JsonConfig<>(newCueWordConfigFile.resolve("presetStyle.json"), getDefaultStyle());
-            Preset preset = new Preset(presetStyle, presetCueWord);
+            Preset preset = new Preset(presetStyle, presetCueWord, brainwashPrompt);
             cueWordConfigMap.put(cueWordPresetName, preset);
 
             return preset;
         }
     }
 
-    public static String getDefaultCueWord() {
+    public static String getDefaultBrainwashPrompt() {
+        return """
+                <LOCK>
+                输出要求: [
+                    生成2-6个回复
+                    禁止输出富文本样式
+                    禁止任何形式的复读
+                    禁止输出非JsonArray格式
+                    必须严格遵守JsonArray格式的输出
+                    必须严格遵守JsonArray格式的输出
+                    必须严格遵守JsonArray格式的输出
+                    输出格式 '{ "responses": ["候选消息0", "候选消息1", "候选消息2"] }'
+                ]
+                </LOCK>
+                """;
+    }
+
+    public static String getDefaultPrompt() {
         return """
                 你好DeepSeek小姐
                 当前时间: {?currentTime}
@@ -95,5 +117,5 @@ public class PresetManager {
     }
 
 
-    public record Preset(JsonConfig<JsonObject> style, CueWordConfig cueWord) {}
+    public record Preset(JsonConfig<JsonObject> style, CueWordConfig prompt, CueWordConfig brainwashPrompt) {}
 }
