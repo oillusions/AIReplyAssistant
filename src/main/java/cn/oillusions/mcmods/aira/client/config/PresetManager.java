@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PresetManager {
-    public static final Path CUEWORDS_PATH = FabricLoader.getInstance().getGameDir().resolve("cueWordPreset");
+    public static final Path CUEWORDS_PATH = FabricLoader.getInstance().getGameDir().resolve("promptPreset");
     public static final String DEFAULT_CUEWORD = "测试";
     private static final Map<String, Preset> cueWordConfigMap = new HashMap<>();
     private static final TextFiller filler = new TextFiller();
