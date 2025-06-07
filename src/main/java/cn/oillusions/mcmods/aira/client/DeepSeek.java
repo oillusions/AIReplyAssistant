@@ -62,11 +62,13 @@ public class DeepSeek {
                     deepSeek.addMessage(Role.SYSTEM, brainwashPrompt);
                     onTriggerGen();
 
-                    System.out.println(Text.translatable("aira.error.warn.retry.message.message"));
+                    System.out.println(Text.literal(
+                            Text.translatable("aira.error.warn.retry.message.message")
+                                    .getString().formatted(retryCount)));
                     sendToastMessage(
                             Text.translatable("aira.error.warn.retry.message.title"),
                             Text.literal(
-                                    Text.literal("aira.error.warn.retry.message.message")
+                                    Text.translatable("aira.error.warn.retry.message.message")
                                             .getString().formatted(retryCount))
                     );
                 } else {
