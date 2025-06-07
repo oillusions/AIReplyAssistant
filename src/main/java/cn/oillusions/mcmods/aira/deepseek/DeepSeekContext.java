@@ -90,7 +90,6 @@ public class DeepSeekContext {
         HttpRequest request = buildRequest(buildRequestBody());
         contentStreamBuffer = new StringBuilder();
         reasoningStreamBuffer = new StringBuilder();
-        System.out.println(gson.toJson(buildRequestBody()));
 
         if (config.isRequestMode()) {
             if (config.isStream()) {
