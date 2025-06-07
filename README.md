@@ -139,4 +139,5 @@
 ---
 
 > [打包好的jar](https://github.com/oillusions/AIReplyAssistant/releases/tag/AAA)
+
 > [独立的DeepSeek调用库](https://github.com/oillusions/DeepSeek-API-Java-Client)
