@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
@@ -63,7 +64,7 @@ public class KeyTriggerListener {
             for (int i = 0; i < 6; i++) {
                 if (numberKeys[i].wasPressed()) {
                     JsonArray reply = AiraClient.getInstance().getDeepSeek().getReplyCandidate();
-                    if (reply != null && reply.size() != 1) {
+                    if (reply != null && reply.size() != 1 && reply.size() > i) {
                         client.player.networkHandler.sendChatMessage(reply.get(i).getAsString());
                         JsonArray tmp = new JsonArray();
                         tmp.add("空");

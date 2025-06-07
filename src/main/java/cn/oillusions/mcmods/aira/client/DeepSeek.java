@@ -54,7 +54,7 @@ public class DeepSeek {
                     }
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }));
 
