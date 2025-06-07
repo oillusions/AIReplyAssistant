@@ -17,19 +17,19 @@
 
 ```plaintext
 
-游戏文件夹/
+游戏文件夹
 │
-├── config/
-│   └── aira/
+├── config
+│   └── aira
 │       ├── aira.json
 │       └── other_configs
 │
-├── promptPreset/
+├── promptPreset
 │   ├── deepseek_preset.json
 │   ├── prompt_template.txt
 │   └── brainwash_template.txt
 │
-└── mods/
+└── mods
     └── AIReplyAssistant.jar
 ```
 
