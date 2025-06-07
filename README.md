@@ -135,3 +135,7 @@
 ---
 
 **[坏笑]实际上这个README也是让DeepSeek写的(别问, 问就是我压根不会写, 况且这种事情让AI写很合理吧!)**
+
+---
+
+> [打包好的jar](https://github.com/oillusions/AIReplyAssistant/releases/tag/AAA)
