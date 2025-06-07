@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.deepseek;
+package cn.oillusions.mcmods.aira.deepseek;
 
 import com.google.gson.JsonObject;
 

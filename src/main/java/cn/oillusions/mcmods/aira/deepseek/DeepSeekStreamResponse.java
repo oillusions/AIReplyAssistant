@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.deepseek;
+package cn.oillusions.mcmods.aira.deepseek;
 
 import com.google.gson.JsonObject;
 
@@ -15,40 +15,44 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
 
         this.content = extractContent();
         this.reasoningContent = extractReasoningContent();
-        this.reasoning = !this.reasoningContent.isBlank();
+        this.reasoning = this.content.isBlank();
     }
 
-
-    private String extractContent()
-    {
+    protected JsonObject extractDelta() {
         if (this.rewResponse.has("choices")) {
             try {
                 return rewResponse.getAsJsonArray("choices")
                         .get(0).getAsJsonObject()
-                        .getAsJsonObject("delta")
-                        .get("content").getAsString();
+                        .getAsJsonObject("delta");
             } catch (Exception e) {
-                return "";
+                return new JsonObject();
             }
         }
-        return "";
+        return new JsonObject();
     }
 
-    private String extractReasoningContent() {
-        if (this.rewResponse.has("choices")) {
+    protected String extractContent()
+    {
             try {
-                JsonObject message = rewResponse.getAsJsonArray("choices")
-                        .get(0).getAsJsonObject()
-                        .getAsJsonObject("delta");
-                if (message.has("reasoning_content") && !message.get("reasoning_content").isJsonNull()) {
-                    return message.get("reasoning_content").getAsString();
-                } else {
-                    return "";
+                JsonObject messageStream = extractDelta();
+                if (messageStream.has("content") && !messageStream.get("content").isJsonNull()) {
+                    return messageStream.get("content").getAsString();
                 }
             } catch (Exception e) {
                 return "";
             }
-        }
+        return "";
+    }
+
+    protected String extractReasoningContent() {
+            try {
+                JsonObject messageStream = extractDelta();
+                if (messageStream.has("reasoning_content") && !messageStream.get("reasoning_content").isJsonNull()) {
+                    return messageStream.get("reasoning_content").getAsString();
+                }
+            } catch (Exception e) {
+                return "";
+            }
         return "";
     }
 

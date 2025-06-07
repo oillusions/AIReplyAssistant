@@ -1,10 +1,10 @@
-package top.o_illusions.mcmods.aira;
+package cn.oillusions.mcmods.aira;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import top.o_illusions.mcmods.aira.client.config.JsonConfig;
+import cn.oillusions.mcmods.aira.client.config.JsonConfig;
 
 
 import java.nio.file.Path;

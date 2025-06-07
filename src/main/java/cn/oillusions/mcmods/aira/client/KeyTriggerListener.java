@@ -1,7 +1,6 @@
-package top.o_illusions.mcmods.aira.client;
+package cn.oillusions.mcmods.aira.client;
 
 import com.google.gson.JsonArray;
-import kotlinx.serialization.json.Json;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;

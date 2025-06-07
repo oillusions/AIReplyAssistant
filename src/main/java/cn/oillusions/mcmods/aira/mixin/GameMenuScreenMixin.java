@@ -1,7 +1,5 @@
-package top.o_illusions.mcmods.aira.mixin;
+package cn.oillusions.mcmods.aira.mixin;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -10,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.o_illusions.mcmods.aira.client.AiraClient;
+import cn.oillusions.mcmods.aira.client.AiraClient;
 
 @Mixin(GameMenuScreen.class)
 public class GameMenuScreenMixin extends Screen {

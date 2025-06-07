@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.config;
+package cn.oillusions.mcmods.aira.config;
 
 import java.util.function.Consumer;
 

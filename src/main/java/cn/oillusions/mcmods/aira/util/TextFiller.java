@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.util;
+package cn.oillusions.mcmods.aira.util;
 
 import java.util.ArrayList;
 import java.util.List;

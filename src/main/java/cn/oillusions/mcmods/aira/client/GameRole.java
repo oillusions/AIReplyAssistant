@@ -1,6 +1,6 @@
-package top.o_illusions.mcmods.aira.client;
+package cn.oillusions.mcmods.aira.client;
 
-import top.o_illusions.mcmods.aira.deepseek.Role;
+import cn.oillusions.mcmods.aira.deepseek.Role;
 
 public enum GameRole {
     PLAYER(Role.USER, "Player"),

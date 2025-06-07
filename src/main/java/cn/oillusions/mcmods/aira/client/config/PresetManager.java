@@ -1,8 +1,8 @@
-package top.o_illusions.mcmods.aira.client.config;
+package cn.oillusions.mcmods.aira.client.config;
 
 import com.google.gson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
-import top.o_illusions.mcmods.aira.util.TextFiller;
+import cn.oillusions.mcmods.aira.util.TextFiller;
 
 import java.nio.file.Path;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
-package top.o_illusions.mcmods.aira.client.config;
+package cn.oillusions.mcmods.aira.client.config;
 
-import top.o_illusions.mcmods.aira.config.Config;
+import cn.oillusions.mcmods.aira.config.Config;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

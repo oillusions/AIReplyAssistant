@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.deepseek;
+package cn.oillusions.mcmods.aira.deepseek;
 
 import com.google.gson.JsonObject;
 
@@ -18,20 +18,25 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
         this.reasoning = !this.reasoningContent.isBlank();
     }
 
-
-    private String extractContent()
-    {
-        StringBuilder contentStreamBuffer = new StringBuilder();
+    protected JsonObject extractMessage() {
         if (this.rewResponse.has("choices")) {
             try {
-                rewResponse.getAsJsonArray("choices").forEach(object -> {
-                    JsonObject message = object.getAsJsonObject()
-                            .getAsJsonObject("message");
-                    if (message.has("content") && !message.get("content").isJsonNull()) {
-                        contentStreamBuffer.append(message.get("content").getAsString());
-                    }
-                });
-                return contentStreamBuffer.toString();
+                return rewResponse.getAsJsonArray("choices")
+                        .get(0).getAsJsonObject()
+                        .getAsJsonObject("message");
+            } catch (Exception e) {
+                return new JsonObject();
+            }
+        }
+        return new JsonObject();
+    }
+
+
+    protected String extractContent()
+    {
+        if (this.rewResponse.has("choices")) {
+            try {
+                return extractMessage().get("content").getAsString();
             } catch (Exception e) {
                 return "";
             }
@@ -39,18 +44,13 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
         return "";
     }
 
-    private String extractReasoningContent() {
-        StringBuilder contentStreamBuffer = new StringBuilder();
+    protected String extractReasoningContent() {
         if (this.rewResponse.has("choices")) {
             try {
-                rewResponse.getAsJsonArray("choices").forEach(object -> {
-                    JsonObject message = object.getAsJsonObject()
-                            .getAsJsonObject("message");
-                    if (message.has("reasoning_content") && !message.get("reasoning_content").isJsonNull()) {
-                        contentStreamBuffer.append(message.get("reasoning_content").getAsString());
-                    }
-                });
-                return contentStreamBuffer.toString();
+                JsonObject message = extractMessage();
+                if (message.has("reasoning_content") && !message.get("reasoning_content").isJsonNull()) {
+                    return message.get("reasoning_content").getAsString();
+                }
             } catch (Exception e) {
                 return "";
             }

@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.deepseek;
+package cn.oillusions.mcmods.aira.deepseek;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -15,16 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class DeepSeekHelper {
+public class DeepSeekContext {
     private final Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
     private final DeepSeekConfig config;
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private JsonArray messageContext = new JsonArray();
+    private StringBuilder contentStreamBuffer;
+    private StringBuilder reasoningStreamBuffer;
 
     private final List<Consumer<DeepSeekResponse>> listeners = new ArrayList<>();
 
 
-    public DeepSeekHelper(DeepSeekConfig config) {
+    public DeepSeekContext(DeepSeekConfig config) {
         this.config = config;
     }
 
@@ -86,6 +88,9 @@ public class DeepSeekHelper {
 
     public void request() {
         HttpRequest request = buildRequest(buildRequestBody());
+        contentStreamBuffer = new StringBuilder();
+        reasoningStreamBuffer = new StringBuilder();
+        System.out.println(gson.toJson(buildRequestBody()));
 
         if (config.isRequestMode()) {
             if (config.isStream()) {
@@ -96,9 +101,15 @@ public class DeepSeekHelper {
                                 String line;
                                 while ((line = reader.readLine()) != null) {
                                     if (line.startsWith("data: ")) {
-                                        notifyListener(new DeepSeekStreamResponse(gson.fromJson(line.substring(6), JsonObject.class), response.statusCode()));
-                                    } else if (line.startsWith("data: [DONE]")) {
-                                        notifyListener(null);
+                                        DeepSeekStreamResponse deepSeekResponse = new DeepSeekStreamResponse(gson.fromJson(line.substring(6), JsonObject.class), response.statusCode());
+                                        if (deepSeekResponse.isReasoning()) {
+                                            reasoningStreamBuffer.append(deepSeekResponse.getReasoningContent());
+                                        } else {
+                                            contentStreamBuffer.append(deepSeekResponse.getContent());
+                                        }
+                                        deepSeekResponse.extractDelta().addProperty("reasoning_content", reasoningStreamBuffer.toString());
+                                        deepSeekResponse.extractDelta().addProperty("content", contentStreamBuffer.toString());
+                                        notifyListener(new DeepSeekStreamResponse(deepSeekResponse.getRewResponse(), response.statusCode()));
                                     }
                                 }
                             } catch (Exception e) {

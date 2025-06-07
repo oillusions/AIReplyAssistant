@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.deepseek;
+package cn.oillusions.mcmods.aira.deepseek;
 
 public class DeepSeekConfig {
     private boolean requestMode = false;

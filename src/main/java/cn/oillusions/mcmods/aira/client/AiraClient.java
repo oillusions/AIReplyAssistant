@@ -1,12 +1,12 @@
-package top.o_illusions.mcmods.aira.client;
+package cn.oillusions.mcmods.aira.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import top.o_illusions.mcmods.aira.client.config.PresetManager;
-import top.o_illusions.mcmods.aira.hud.ReplyHud;
-import top.o_illusions.mcmods.aira.util.TextFiller;
+import cn.oillusions.mcmods.aira.client.config.PresetManager;
+import cn.oillusions.mcmods.aira.hud.ReplyHud;
+import cn.oillusions.mcmods.aira.util.TextFiller;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

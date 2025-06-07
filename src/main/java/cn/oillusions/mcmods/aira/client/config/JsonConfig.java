@@ -1,10 +1,10 @@
-package top.o_illusions.mcmods.aira.client.config;
+package cn.oillusions.mcmods.aira.client.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import top.o_illusions.mcmods.aira.config.Config;
+import cn.oillusions.mcmods.aira.config.Config;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

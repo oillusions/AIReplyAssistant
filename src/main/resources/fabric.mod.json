@@ -13,10 +13,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "top.o_illusions.mcmods.aira.client.AiraClient"
+      "cn.oillusions.mcmods.aira.client.AiraClient"
     ],
     "main": [
-      "top.o_illusions.mcmods.aira.Aira"
+      "cn.oillusions.mcmods.aira.Aira"
     ]
   },
   "mixins": [

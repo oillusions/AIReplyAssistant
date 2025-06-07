@@ -1,20 +1,20 @@
-package top.o_illusions.mcmods.aira.client;
+package cn.oillusions.mcmods.aira.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
-import top.o_illusions.mcmods.aira.Aira;
-import top.o_illusions.mcmods.aira.client.config.PresetManager;
-import top.o_illusions.mcmods.aira.deepseek.DeepSeekConfig;
-import top.o_illusions.mcmods.aira.deepseek.DeepSeekHelper;
-import top.o_illusions.mcmods.aira.deepseek.Model;
-import top.o_illusions.mcmods.aira.deepseek.ResultFormat;
+import cn.oillusions.mcmods.aira.Aira;
+import cn.oillusions.mcmods.aira.client.config.PresetManager;
+import cn.oillusions.mcmods.aira.deepseek.DeepSeekConfig;
+import cn.oillusions.mcmods.aira.deepseek.DeepSeekContext;
+import cn.oillusions.mcmods.aira.deepseek.Model;
+import cn.oillusions.mcmods.aira.deepseek.ResultFormat;
 
 public class DeepSeek {
     private final MinecraftClient client = MinecraftClient.getInstance();
-    private final DeepSeekHelper deepSeek;
+    private final DeepSeekContext deepSeek;
     private JsonArray replyCandidate;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final JsonObject airaConfig;
@@ -41,7 +41,7 @@ public class DeepSeek {
                 .frequencyPenalty(style.get("frequency_penalty").getAsFloat())
                 .systemPrompt(cueWord)
                 .build();
-        deepSeek = new DeepSeekHelper(deepSeekConfig);
+        deepSeek = new DeepSeekContext(deepSeekConfig);
         deepSeek.addListener((response -> {
             try {
                 complete = true;

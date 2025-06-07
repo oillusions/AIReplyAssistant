@@ -1,4 +1,4 @@
-package top.o_illusions.mcmods.aira.hud;
+package cn.oillusions.mcmods.aira.hud;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -7,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import top.o_illusions.mcmods.aira.client.AiraClient;
+import cn.oillusions.mcmods.aira.client.AiraClient;
 
 public class ReplyHud {
     private final MinecraftClient client = MinecraftClient.getInstance();
