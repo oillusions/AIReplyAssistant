@@ -24,6 +24,8 @@ public class Aira implements ModInitializer {
         JsonArray defaultStyle = new JsonArray();
         defaultConfig.addProperty("api_url", "https://api.deepseek.com/chat/completions");
         defaultConfig.addProperty("api_key", "sk-xxx");
+        defaultConfig.addProperty(  "max_retries", 2);
+        defaultConfig.addProperty("silent_message", false);
         defaultConfig.addProperty("current", "default");
 
         defaultStyle.add("default");

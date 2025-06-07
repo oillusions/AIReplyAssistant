@@ -1,0 +1,24 @@
+{
+  "aira.error.warn.retry.message.title": "Retry",
+  "aira.error.warn.retry.message.message": "Retrying [%s]",
+
+  "aira.error.warn.retry.timeout.message.title": "Retry Timeout",
+  "aira.error.warn.retry.timeout.message.message": "Retry timed out, session has been reset",
+
+  "aira.gen.message.title": "Trigger Generation",
+  "aira.gen.message.message": "Generation triggered",
+
+  "aira.gen.wait.message.title": "Generation Pending",
+  "aira.gen.wait.message.message": "Current request not yet completed",
+
+  "aira.hud.title": "Available",
+
+  "aira.category.key_trigger": "Generate Response Candidates",
+  "aira.key.key_trigger.tab": "Trigger Generation [Double-tap]",
+  "aira.key.key_trigger.num1": "Candidate 1",
+  "aira.key.key_trigger.num2": "Candidate 2",
+  "aira.key.key_trigger.num3": "Candidate 3",
+  "aira.key.key_trigger.num4": "Candidate 4",
+  "aira.key.key_trigger.num5": "Candidate 5",
+  "aira.key.key_trigger.num6": "Candidate 6"
+}

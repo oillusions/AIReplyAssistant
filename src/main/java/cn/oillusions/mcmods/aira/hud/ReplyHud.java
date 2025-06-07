@@ -8,6 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import cn.oillusions.mcmods.aira.client.AiraClient;
+import net.minecraft.text.Text;
 
 public class ReplyHud {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -19,7 +20,7 @@ public class ReplyHud {
         TextRenderer textRenderer = client.textRenderer;
         JsonArray reply = AiraClient.getInstance().getDeepSeek().getReplyCandidate();
         int y = textRenderer.fontHeight + 2;
-        context.drawText(textRenderer, "测试", 0, 0, 0xFFFFFFFF, false);
+        context.drawText(textRenderer, Text.translatable("aira.hud.title"), 0, 0, 0xFFFFFFFF, false);
         for (JsonElement text : reply) {
             context.drawText(textRenderer, text.getAsString(), 0, y, 0xFFFFFFFF, false);
             y += textRenderer.fontHeight;

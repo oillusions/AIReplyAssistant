@@ -1,10 +1,24 @@
 {
-  "category.key_trigger": "生成回复候选",
-  "key.key_trigger.tab": "触发生成[双击]",
-  "key.key_trigger.num1": "候选1",
-  "key.key_trigger.num2": "候选2",
-  "key.key_trigger.num3": "候选3",
-  "key.key_trigger.num4": "候选4",
-  "key.key_trigger.num5": "候选5",
-  "key.key_trigger.num6": "候选6"
+  "aira.error.warn.retry.message.title": "重试",
+  "aira.error.warn.retry.message.message": "重试中[%s]",
+
+  "aira.error.warn.retry.timeout.message.title": "重试超时",
+  "aira.error.warn.retry.timeout.message.message": "重试超时, 已重置会话",
+
+  "aira.gen.message.title": "触发生成",
+  "aira.gen.message.message": "已触发生成",
+
+  "aira.gen.wait.message.title": "生成等待",
+  "aira.gen.wait.message.message": "当前请求尚未完成",
+
+  "aira.hud.title": "能用",
+
+  "aira.category.key_trigger": "生成回复候选",
+  "aira.key.key_trigger.tab": "触发生成[双击]",
+  "aira.key.key_trigger.num1": "候选1",
+  "aira.key.key_trigger.num2": "候选2",
+  "aira.key.key_trigger.num3": "候选3",
+  "aira.key.key_trigger.num4": "候选4",
+  "aira.key.key_trigger.num5": "候选5",
+  "aira.key.key_trigger.num6": "候选6"
 }

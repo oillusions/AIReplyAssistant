@@ -23,18 +23,18 @@ public class KeyTriggerListener {
 
     public KeyTriggerListener() {
         this.tabKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.key_trigger.tab",
+                "aira.key.key_trigger.tab",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_TAB,
-                "category.key_trigger"
+                "aira.category.key_trigger"
         ));
         for (int i = 0; i < 6; i++) {
             int keyCode = GLFW.GLFW_KEY_1 + i;
             numberKeys[i] = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                    "key.key_trigger.num" + (i + 1),
+                    "aira.key.key_trigger.num" + (i + 1),
                     InputUtil.Type.KEYSYM,
                     keyCode,
-                    "category.key_trigger"
+                    "aira.category.key_trigger"
             ));
         }
 

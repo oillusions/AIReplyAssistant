@@ -23,6 +23,7 @@
 {
   "api_url": "https://api.deepseek.com/chat/completions",
   "api_key": "在此填写您的 DeepSeek API 密钥",
+  "max_retries": 2,
   "current": "default",
   "styles": ["default"]
 }
