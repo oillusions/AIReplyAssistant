@@ -77,20 +77,21 @@
 
 ---
 
-**让 AI 助力您的 Minecraft 社交体验！** 🎮💬✨
-
----
-
-**[坏笑]实际上这个README也是让DeepSeek写的(别问, 问就是我压根不会写, 况且这种事情让AI写很合理吧!)**
-
----
-
 > [打包好的jar](https://github.com/oillusions/AIReplyAssistant/releases/tag/AAA)
 
 > [独立的DeepSeek调用库](https://github.com/oillusions/DeepSeek-API-Java-Client)
 
 
 ## ⚙️ 配置禁忌
+
+### 配置文件
+
+|            文件名            |               作用                |
+|:-------------------------:|:-------------------------------:|
+|         aira.json         |             模组主配置文件             |
+|     presetStyle.json      |         预设中DeepSeek配置文件         |
+|     presetPrompt.txt      |            预设系统提示词文件            |
+| presetBrainwashPrompt.txt | 预设洗脑\[在不输出JsonArray格式时发送\]提示词文件 |
 
 ### 配置示例：
 
@@ -108,7 +109,7 @@
 ```
 
 ### 🔧 DeepSeek预设 和 自定义提示词 与 洗脑提示词
-在以下路径创建和编辑提示词模板：`<游戏文件夹>/cueWordPreset/`
+在以下路径创建和编辑提示词模板：`<游戏文件夹>/promptPreset/`
 
 #### DeepSeek预设:
 
@@ -182,3 +183,8 @@
 </LOCK>
 
 ```
+
+---
+
+**[坏笑]实际上这个README也是让DeepSeek写的(别问, 问就是我压根不会写, 况且这种事情让AI写很合理吧!)**
+
