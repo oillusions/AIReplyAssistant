@@ -52,6 +52,7 @@ public class PresetManager {
                     生成2-6个回复
                     禁止输出富文本样式
                     禁止任何形式的复读
+                    每个回复都不能复读上下文[除非用户要求]
                     禁止输出非JsonArray格式
                     必须严格遵守JsonArray格式的输出
                     必须严格遵守JsonArray格式的输出
@@ -94,6 +95,7 @@ public class PresetManager {
                         生成2-6个回复
                         禁止输出富文本样式
                         禁止任何形式的复读
+                        每个回复都不能复读上下文[除非用户要求]
                         禁止输出非JsonArray格式
                         必须严格遵守JsonArray格式的输出
                         必须严格遵守JsonArray格式的输出
