@@ -110,9 +110,9 @@ public class DeepSeekContext {
                                         }
                                         deepSeekResponse.extractDelta().addProperty("reasoning_content", reasoningStreamBuffer.toString());
                                         deepSeekResponse.extractDelta().addProperty("content", contentStreamBuffer.toString());
-                                        notifyListener(new DeepSeekStreamResponse(deepSeekResponse.getRewResponse(), response.statusCode()));
+                                        notifyListener(new DeepSeekStreamResponse(deepSeekResponse.getRawResponse(), response.statusCode()));
 
-                                        prevResponse = deepSeekResponse.getRewResponse().deepCopy();
+                                        prevResponse = deepSeekResponse.getRawResponse().deepCopy();
                                     } else if (line.startsWith("data: [DONE]")){
                                         notifyListener(new DeepSeekNonStreamResponse(prevResponse, response.statusCode()));
                                     }

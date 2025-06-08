@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 public interface DeepSeekResponse {
     public int getStatusCode();
 
-    public JsonObject getRewResponse();
+    public JsonObject getRawResponse();
 
     public String getContent();
 

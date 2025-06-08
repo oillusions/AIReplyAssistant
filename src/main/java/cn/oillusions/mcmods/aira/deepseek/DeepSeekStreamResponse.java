@@ -3,14 +3,14 @@ package cn.oillusions.mcmods.aira.deepseek;
 import com.google.gson.JsonObject;
 
 public class DeepSeekStreamResponse implements DeepSeekResponse {
-    private final JsonObject rewResponse;
+    private final JsonObject rawResponse;
     private final String content;
     private final String reasoningContent;
     private final int statusCode;
     private final boolean reasoning;
 
-    public DeepSeekStreamResponse(JsonObject rewResponse, int statusCode) {
-        this.rewResponse = rewResponse;
+    public DeepSeekStreamResponse(JsonObject rawResponse, int statusCode) {
+        this.rawResponse = rawResponse;
         this.statusCode = statusCode;
 
         this.content = extractContent();
@@ -19,9 +19,9 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
     }
 
     protected JsonObject extractDelta() {
-        if (this.rewResponse.has("choices")) {
+        if (this.rawResponse.has("choices")) {
             try {
-                return rewResponse.getAsJsonArray("choices")
+                return rawResponse.getAsJsonArray("choices")
                         .get(0).getAsJsonObject()
                         .getAsJsonObject("delta");
             } catch (Exception e) {
@@ -60,8 +60,8 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
         return statusCode;
     }
 
-    public JsonObject getRewResponse() {
-        return rewResponse;
+    public JsonObject getRawResponse() {
+        return rawResponse;
     }
 
     public String getContent() {

@@ -3,14 +3,14 @@ package cn.oillusions.mcmods.aira.deepseek;
 import com.google.gson.JsonObject;
 
 public class DeepSeekNonStreamResponse implements DeepSeekResponse {
-    private final JsonObject rewResponse;
+    private final JsonObject rawResponse;
     private final String content;
     private final String reasoningContent;
     private final int statusCode;
     private final boolean reasoning;
 
-    public DeepSeekNonStreamResponse(JsonObject rewResponse, int statusCode) {
-        this.rewResponse = rewResponse;
+    public DeepSeekNonStreamResponse(JsonObject rawResponse, int statusCode) {
+        this.rawResponse = rawResponse;
         this.statusCode = statusCode;
 
         this.content = extractContent();
@@ -19,9 +19,9 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
     }
 
     protected JsonObject extractMessage() {
-        if (this.rewResponse.has("choices")) {
+        if (this.rawResponse.has("choices")) {
             try {
-                return rewResponse.getAsJsonArray("choices")
+                return rawResponse.getAsJsonArray("choices")
                         .get(0).getAsJsonObject()
                         .getAsJsonObject("message");
             } catch (Exception e) {
@@ -34,7 +34,7 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
 
     protected String extractContent()
     {
-        if (this.rewResponse.has("choices")) {
+        if (this.rawResponse.has("choices")) {
             try {
                 return extractMessage().get("content").getAsString();
             } catch (Exception e) {
@@ -45,7 +45,7 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
     }
 
     protected String extractReasoningContent() {
-        if (this.rewResponse.has("choices")) {
+        if (this.rawResponse.has("choices")) {
             try {
                 JsonObject message = extractMessage();
                 if (message.has("reasoning_content") && !message.get("reasoning_content").isJsonNull()) {
@@ -62,8 +62,8 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
         return statusCode;
     }
 
-    public JsonObject getRewResponse() {
-        return rewResponse;
+    public JsonObject getRawResponse() {
+        return rawResponse;
     }
 
     public String getContent() {
