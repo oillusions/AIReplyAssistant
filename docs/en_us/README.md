@@ -71,7 +71,7 @@ Candidate replies appear in the top-left corner of the screen:
 
 ## 📝 Open Source License
 
-This project uses GNU General Public License v3.0 - see [LICENSE](LICENSE.txt) file.
+This project uses GNU General Public License v3.0 - see [LICENSE](../../LICENSE.txt) file.
 
 ## 📬 Don't Contact Me
 

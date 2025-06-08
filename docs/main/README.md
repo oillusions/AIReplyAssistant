@@ -1,3 +1,7 @@
+[主文档](README.md) | [English](../en_us/README.md)
+
+---
+
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/oillusions/AIReplyAssistant)
 
 ---
@@ -69,7 +73,7 @@
 
 ## 📝 开源协议
 
-本项目采用 GNU 通用公共许可证 v3.0 - 详见 [LICENSE](LICENSE.txt) 文件。
+本项目采用 GNU 通用公共许可证 v3.0 - 详见 [LICENSE](../../LICENSE.txt) 文件。
 
 ## 📬 别联系我
 
