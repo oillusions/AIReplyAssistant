@@ -1,7 +1,3 @@
-[主文档](docs/main/README.md) | [English](docs/en_us/README.md)
-
----
-
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/oillusions/AIReplyAssistant)
 
 ---
