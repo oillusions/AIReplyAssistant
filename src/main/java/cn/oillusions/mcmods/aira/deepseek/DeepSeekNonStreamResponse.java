@@ -18,42 +18,38 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
         this.reasoning = !this.reasoningContent.isBlank();
     }
 
-    protected JsonObject extractMessage() {
+    protected JsonObject extractChoices(int index) {
         if (this.rawResponse.has("choices")) {
-            try {
-                return rawResponse.getAsJsonArray("choices")
-                        .get(0).getAsJsonObject()
-                        .getAsJsonObject("message");
-            } catch (Exception e) {
-                return new JsonObject();
-            }
+            return rawResponse.getAsJsonArray("choices").get(index).getAsJsonObject();
         }
         return new JsonObject();
+    }
+
+    protected JsonObject extractMessage() {
+        return extractChoices(0).getAsJsonObject("message");
     }
 
 
     protected String extractContent()
     {
-        if (this.rawResponse.has("choices")) {
-            try {
-                return extractMessage().get("content").getAsString();
-            } catch (Exception e) {
-                return "";
-            }
+        try {
+            return extractMessage().get("content").getAsString();
+        } catch (Exception e) {
+            System.err.println(new DeepSeekException(e.getMessage(), -1).getMessage());
+            e.printStackTrace();
         }
         return "";
     }
 
     protected String extractReasoningContent() {
-        if (this.rawResponse.has("choices")) {
-            try {
-                JsonObject message = extractMessage();
-                if (message.has("reasoning_content") && !message.get("reasoning_content").isJsonNull()) {
-                    return message.get("reasoning_content").getAsString();
-                }
-            } catch (Exception e) {
-                return "";
+        try {
+            JsonObject message = extractMessage();
+            if (message.has("reasoning_content") && !message.get("reasoning_content").isJsonNull()) {
+                return message.get("reasoning_content").getAsString();
             }
+        } catch (Exception e) {
+            System.err.println(new DeepSeekException(e.getMessage(), -1).getMessage());
+            e.printStackTrace();
         }
         return "";
     }
@@ -62,7 +58,7 @@ public class DeepSeekNonStreamResponse implements DeepSeekResponse {
         return statusCode;
     }
 
-    public JsonObject getRawResponse() {
+    public JsonObject getrawResponse() {
         return rawResponse;
     }
 

@@ -39,10 +39,10 @@ public class DeepSeekContext {
 
         message.addProperty("content", content);
         message.addProperty("role", role.getValue());
-
         if (name != null && !name.isBlank()) {
             message.addProperty("name", name);
         }
+
         messageContext.add(message);
     }
 
@@ -90,13 +90,16 @@ public class DeepSeekContext {
         HttpRequest request = buildRequest(buildRequestBody());
         contentStreamBuffer = new StringBuilder();
         reasoningStreamBuffer = new StringBuilder();
-//        System.out.println(gson.toJson(gson.fromJson(buildRequestBody(), JsonObject.class)));
 
         if (config.isRequestMode()) {
             if (config.isStream()) {
                 httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
                         .thenAccept(response -> {
-                            try (InputStream stream = response.body()) {
+                            if (response.statusCode() != 200) {
+                                System.err.println(new DeepSeekException("DeepSeekContext.request.error.api", response.statusCode()).getMessage());
+                            }
+                            try {
+                                InputStream stream = response.body();
                                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                                 String line;
                                 JsonObject prevResponse = new JsonObject();
@@ -110,11 +113,13 @@ public class DeepSeekContext {
                                         }
                                         deepSeekResponse.extractDelta().addProperty("reasoning_content", reasoningStreamBuffer.toString());
                                         deepSeekResponse.extractDelta().addProperty("content", contentStreamBuffer.toString());
-                                        notifyListener(new DeepSeekStreamResponse(deepSeekResponse.getRawResponse(), response.statusCode()));
+                                        notifyListener(new DeepSeekStreamResponse(deepSeekResponse.getrawResponse(), response.statusCode()));
 
-                                        prevResponse = deepSeekResponse.getRawResponse().deepCopy();
+                                        prevResponse = deepSeekResponse.getrawResponse().deepCopy();
                                     } else if (line.startsWith("data: [DONE]")){
-                                        notifyListener(new DeepSeekNonStreamResponse(prevResponse, response.statusCode()));
+                                        DeepSeekStreamResponse streamResponse = new DeepSeekStreamResponse(prevResponse, response.statusCode());
+                                        streamResponse.extractChoices(0).add("message", streamResponse.extractDelta());
+                                        notifyListener(new DeepSeekNonStreamResponse(streamResponse.getrawResponse(), response.statusCode()));
                                     }
                                 }
                             } catch (Exception e) {

@@ -18,17 +18,15 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
         this.reasoning = this.content.isBlank();
     }
 
-    protected JsonObject extractDelta() {
+    protected JsonObject extractChoices(int index) {
         if (this.rawResponse.has("choices")) {
-            try {
-                return rawResponse.getAsJsonArray("choices")
-                        .get(0).getAsJsonObject()
-                        .getAsJsonObject("delta");
-            } catch (Exception e) {
-                return new JsonObject();
-            }
+            return rawResponse.getAsJsonArray("choices").get(index).getAsJsonObject();
         }
         return new JsonObject();
+    }
+
+    protected JsonObject extractDelta() {
+        return extractChoices(0).getAsJsonObject("delta");
     }
 
     protected String extractContent()
@@ -39,7 +37,8 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
                     return messageStream.get("content").getAsString();
                 }
             } catch (Exception e) {
-                return "";
+                System.err.println(new DeepSeekException(e.getMessage(), -1).getMessage());
+                e.printStackTrace();
             }
         return "";
     }
@@ -51,7 +50,8 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
                     return messageStream.get("reasoning_content").getAsString();
                 }
             } catch (Exception e) {
-                return "";
+                System.err.println(new DeepSeekException(e.getMessage(), -1).getMessage());
+                e.printStackTrace();
             }
         return "";
     }
@@ -60,7 +60,7 @@ public class DeepSeekStreamResponse implements DeepSeekResponse {
         return statusCode;
     }
 
-    public JsonObject getRawResponse() {
+    public JsonObject getrawResponse() {
         return rawResponse;
     }
 
