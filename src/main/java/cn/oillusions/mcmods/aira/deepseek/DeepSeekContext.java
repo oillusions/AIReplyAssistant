@@ -39,10 +39,10 @@ public class DeepSeekContext {
 
         message.addProperty("content", content);
         message.addProperty("role", role.getValue());
+
         if (name != null && !name.isBlank()) {
             message.addProperty("name", name);
         }
-
         messageContext.add(message);
     }
 

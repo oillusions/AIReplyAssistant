@@ -56,6 +56,7 @@ public class DeepSeek {
                         client.player.networkHandler.sendChatMessage(reply.get(0).getAsString());
                     }
                 }
+                retryCount = 0;
             } catch (Exception e) {
                 e.printStackTrace();
                 if (retryCount < airaConfig.get("max_retries").getAsInt()) {
