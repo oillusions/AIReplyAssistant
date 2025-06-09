@@ -3,7 +3,7 @@
 ---
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/oillusions/AIReplyAssistant)
-[![AIReplyAssistant](../assess/badge.svg)](https://www.bilibili.com/video/BV1GJ411x7h7)
+[![AIReplyAssistant](docs/assess/badge.svg)](https://www.bilibili.com/video/BV1GJ411x7h7)
 
 ---
 
